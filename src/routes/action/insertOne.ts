@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import connectToClient from "../../lib/mongo.js";
+import { connectToClient, headerSchema } from "../../lib/mongo.js";
 import { z } from "zod";
 
 const app = new Hono();
@@ -10,19 +10,6 @@ const bodySchema = z.object({
 	database: z.string(),
 	collection: z.string(),
 	document: z.record(z.any()),
-});
-
-// Schema for the request headers
-const headerSchema = z.object({
-	authorization: z
-		.string()
-		.startsWith("mongodb")
-		.regex(
-			new RegExp(
-				"^(mongodb(?:\\+srv)?(\\:)(?:\\/{2}){1})(?:\\w+\\:\\w+\\@)?(\\w+?(?:\\.\\w+?)*)(\\:)(\\d+(?:\\/){0,1})(?:\\/\\w+?)?(?:\\?\\w+?\\=\\w+?(?:\\&\\w+?\\=\\w+?)*)?$",
-				"gm"
-			)
-		),
 });
 
 app.post(
